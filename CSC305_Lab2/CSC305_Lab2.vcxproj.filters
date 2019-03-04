@@ -30,9 +30,18 @@
     <ClInclude Include="Memory.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="queue\PrecondViolatedExcep.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="queue\PrecondViolatedExcep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

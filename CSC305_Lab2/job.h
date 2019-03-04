@@ -11,7 +11,7 @@ class job {
 
 public:
 	job();
-	job(int, int);
+	job(int);
 
 	int getId();
 	int getSize();
@@ -26,8 +26,8 @@ job::job() {
 
 }
 
-job::job(int size, int status) 
-	:status(status), id(idCounter)
+job::job(int size) 
+	:size(size), status(false), id(idCounter)
 {
 	idCounter++;
 }

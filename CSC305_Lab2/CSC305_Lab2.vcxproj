@@ -116,6 +116,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainFunctions.cpp" />
+    <ClCompile Include="queue\PrecondViolatedExcep.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h" />
@@ -123,6 +125,7 @@
     <ClInclude Include="Memory.h" />
     <ClInclude Include="MemPartition.h" />
     <ClInclude Include="queue\ArrayQueue.h" />
+    <ClInclude Include="queue\PrecondViolatedExcep.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
