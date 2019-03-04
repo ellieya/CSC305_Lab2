@@ -41,8 +41,5 @@
     <ClCompile Include="queue\PrecondViolatedExcep.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mainFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

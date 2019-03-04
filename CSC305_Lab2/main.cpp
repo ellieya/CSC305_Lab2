@@ -155,19 +155,19 @@ void calculate(char algorithm, ArrayQueue<job>& targetJobsQueue, ArrayQueue<job>
 		}
  	}
 	
-	/*
+	
 	//Check memory partition jobs data...
 	cout << "ID | SIZE | WASTE | STATUS | PARTITION_ID" << endl;
-	for (int i = 0; i < mainMemory.getInitiatedPartitionCounter(); i++) {
-		if (mainMemory.getPartitionAt(i).getStatus()) {
-			cout << mainMemory.getPartitionAt(i).getJob().getId() << " "
-			<< mainMemory.getPartitionAt(i).getJob().getSize() << " "
-			<< mainMemory.getPartitionAt(i).getWaste() << " "
-			<< mainMemory.getPartitionAt(i).getJob().getStatus() << " "
-			<< mainMemory.getPartitionAt(i).getJob().getPartitionID() << " " << endl;
-		}
+	for (int i = 0; i < targetMemory.getInitiatedPartitionCounter(); i++) {
+		//if (targetMemory.getPartitionAt(i).getStatus()) {
+			cout << targetMemory.getPartitionAt(i).getJob().getId() << " "
+			<< targetMemory.getPartitionAt(i).getJob().getSize() << " "
+			<< targetMemory.getPartitionAt(i).getWaste() << " "
+			<< targetMemory.getPartitionAt(i).getJob().getStatus() << " "
+			<< targetMemory.getPartitionAt(i).getJob().getPartitionID() << " " << endl;
+			//}
 	}
-	*/
+	
 
 	//Calculate jobs on wait
 	jobsWaitCount = 0;

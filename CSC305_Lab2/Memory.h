@@ -36,7 +36,7 @@ public:
 	//int bestFit(int, job);
 	//int worstFit(int, job);
 
-	Memory& operator =(const Memory&);
+	void operator =(const Memory&);
 };
 
 Memory::Memory() {
@@ -149,18 +149,20 @@ int Memory::nextFit(job job_)
 	}
 }
 
-Memory & Memory::operator=(const Memory & incomingValue)
+void Memory::operator=(const Memory & incomingValue)
 {
+	MemPartition* holder;
+
 	maximumPartitions = incomingValue.maximumPartitions;
 	totalMemorySize = incomingValue.totalMemorySize;
 	lastSetJobPartitionIndex = incomingValue.lastSetJobPartitionIndex;
 	initiatedPartitionCounter = incomingValue.initiatedPartitionCounter;
 
-	partitions = new MemPartition[maximumPartitions];
+	holder = new MemPartition[maximumPartitions];
 	for (int i = 0; i < maximumPartitions; i++) {
-		partitions[i] = incomingValue.partitions[i];
+		holder[i] = incomingValue.partitions[i];
 	}
 
-	return *this;
+	partitions = holder;
 }
 

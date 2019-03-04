@@ -116,7 +116,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mainFunctions.cpp" />
     <ClCompile Include="queue\PrecondViolatedExcep.cpp" />
   </ItemGroup>
   <ItemGroup>
