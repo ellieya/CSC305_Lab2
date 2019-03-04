@@ -23,7 +23,7 @@ public:
 };
 
 job::job() {
-
+	//Intentionally blank, should not have any data if not initialized with other constructor
 }
 
 job::job(int size) 

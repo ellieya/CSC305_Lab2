@@ -2,6 +2,4 @@
 c:\users\khleys\source\repos\csc305_lab2\csc305_lab2\csc305_lab2\queue\arrayqueue.h(32): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
   c:\users\khleys\source\repos\csc305_lab2\csc305_lab2\csc305_lab2\queue\arrayqueue.h(33): note: see reference to class template instantiation 'ArrayQueue<ItemType>' being compiled
 c:\users\khleys\source\repos\csc305_lab2\csc305_lab2\csc305_lab2\queue\arrayqueue.cpp(52): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-c:\users\khleys\source\repos\csc305_lab2\csc305_lab2\csc305_lab2\main.cpp(46): warning C4101: 'worstFitJobsWaitCount': unreferenced local variable
-c:\users\khleys\source\repos\csc305_lab2\csc305_lab2\csc305_lab2\main.cpp(41): warning C4101: 'bestFitJobsWaitCount': unreferenced local variable
   CSC305_Lab2.vcxproj -> C:\Users\Khleys\source\repos\CSC305_Lab2\CSC305_Lab2\Debug\CSC305_Lab2.exe

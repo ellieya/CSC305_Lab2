@@ -23,11 +23,11 @@ public:
 };
 
 MemPartition::MemPartition() {
-
+	//Intentionally blank, should not have any data if not initialized with other constructor
 }
 
 MemPartition::MemPartition(int size)
-	:size(size), id(idCounter), status(false)
+	:size(size), waste(size), id(idCounter), status(false)
 {
 	idCounter++;
 }

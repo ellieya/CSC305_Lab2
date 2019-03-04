@@ -1,7 +1,11 @@
 
 /*
 Any search functions should be adjusted to run until initiatedPartitionCounter, not maximum...
-NEED OVERLOADED ASSIGNMENT
+
+Need a function to calculate total memory waste
+
+unAlloc + iteration through all to .getWaste
+
 */
 
 #pragma once
@@ -11,11 +15,18 @@ NEED OVERLOADED ASSIGNMENT
 
 class Memory {
 	MemPartition* partitions;
-	int maximumPartitions;
-	int totalMemorySize;
-	int lastSetJobPartitionIndex = 0; //For next fit
-	int initiatedPartitionCounter = 0;
-	int unallocSize;
+	int maximumPartitions,
+		totalMemorySize,
+		lastSetJobPartitionIndex = 0, //For next fit
+		initiatedPartitionCounter = 0,
+		unallocSize;
+
+	int firstFit(job);
+	int bestFit(job);
+	int nextFit(job);
+	int worstFit(job);
+	int calculateTotalWaste();
+	int calculateTotalWasteWithUnalloc();
 
 public:
 	Memory();
@@ -29,17 +40,15 @@ public:
 	int getTotalMemorySize();
 	int getInitiatedPartitionCounter();
 	int getUnallocSize();
+	int getTotalWaste(char);
+	//If char argument is U, returns totalWaste of waste on used partitions + ununused partitions + unallocated memory
+	//If char argument is anything else, returns only waste on used partitions
 
-
-	int firstFit(job);
-	int nextFit(job);
-	//int bestFit(int, job);
-	//int worstFit(int, job);
-
-	void operator =(const Memory&);
+	Memory& operator = (const Memory&);
 };
 
 Memory::Memory() {
+	//Intentionally blank, should not have any data if not initialized with other constructor
 }
 
 Memory::Memory(int maximumPartitions, int totalMemorySize)
@@ -73,15 +82,13 @@ bool Memory::setPartitionJob(char algorithm, job _job)
 	case 'N':
 		partitionIndex = nextFit(_job);
 		break;
-		/*
+		
 	case 'B':
-		bestFit(size, _job);
+		partitionIndex = bestFit(_job);
 		break;
 	case 'W':
-		worstFit(size, _job);
+		partitionIndex = worstFit(_job);
 		break;
-
-		*/
 		//NO MATCH CASE
 	}
 
@@ -103,14 +110,25 @@ int Memory::getTotalMemorySize()
 	return totalMemorySize;
 }
 
-inline int Memory::getInitiatedPartitionCounter()
+int Memory::getInitiatedPartitionCounter()
 {
 	return initiatedPartitionCounter;
 }
 
-inline int Memory::getUnallocSize()
+int Memory::getUnallocSize()
 {
 	return unallocSize;
+}
+
+inline int Memory::getTotalWaste(char key)
+{
+	switch (key) {
+	case 'U':
+		return calculateTotalWasteWithUnalloc() + unallocSize;
+		break;
+	default:
+		return calculateTotalWaste();
+	}
 }
 
 int Memory::firstFit(job job_)
@@ -127,7 +145,6 @@ int Memory::firstFit(job job_)
 			i++;
 	}
 }
-
 
 int Memory::nextFit(job job_)
 {
@@ -149,7 +166,72 @@ int Memory::nextFit(job job_)
 	}
 }
 
-void Memory::operator=(const Memory & incomingValue)
+int Memory::bestFit(job job_) {
+	int indexHolder = -1,
+		calculationHolder, //Used to hold calculation so as to avoid doing same calculation twice
+		currentLowestCalcHolder = 32767; //Same as above
+
+	//Iterate through entire array to find lowest possible waste
+	for (int i = 0; i < initiatedPartitionCounter; i++) {
+		calculationHolder = partitions[i].getSize() - job_.getSize();
+		
+		//If calculation is negative, that means it doesn't fit, skip this partition...
+		if (calculationHolder >= 0) {
+			//Otherwise, compare to current lowest, but only if it's not taken, not using <= b/c first to match gets priority
+			if ((!partitions[i].getStatus()) && (calculationHolder < currentLowestCalcHolder)) {
+				currentLowestCalcHolder = calculationHolder;
+				indexHolder = i;
+			}
+		}
+	}
+	return indexHolder;
+}
+
+int Memory::worstFit(job job_) {
+	int indexHolder = -1,
+		calculationHolder, //Used to hold calculation so as to avoid doing same calculation twice
+		currentHighestCalcHolder = -1; //Same as above, set to -1 so that 0 is allowed...
+
+	//Iterate through entire array to find lowest possible waste
+	for (int i = 0; i < initiatedPartitionCounter; i++) {
+		calculationHolder = partitions[i].getSize() - job_.getSize();
+
+		//If calculation is negative, that means it doesn't fit, skip this partition...
+		if (calculationHolder >= 0) {
+			//Otherwise, compare to current highest, but only if it's not taken, not using >= b/c first to match gets priority
+			if ((!partitions[i].getStatus()) && (calculationHolder > currentHighestCalcHolder)) {
+				currentHighestCalcHolder = calculationHolder;
+				indexHolder = i;
+			}
+		}
+	}
+
+	return indexHolder;
+
+}
+
+int Memory::calculateTotalWaste()
+{
+	int sum = 0;
+	for (int i = 0; i < initiatedPartitionCounter; i++) {
+		if (partitions[i].getStatus())
+			sum += partitions[i].getWaste();
+	}
+
+	return sum;
+}
+
+int Memory::calculateTotalWasteWithUnalloc()
+{
+	int sum = 0;
+	for (int i = 0; i < initiatedPartitionCounter; i++) {
+		sum += partitions[i].getWaste();
+	}
+
+	return sum;
+}
+
+Memory& Memory::operator = (const Memory & incomingValue)
 {
 	MemPartition* holder;
 
@@ -164,5 +246,7 @@ void Memory::operator=(const Memory & incomingValue)
 	}
 
 	partitions = holder;
+
+	return *this;
 }
 

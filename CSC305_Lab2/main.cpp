@@ -1,8 +1,3 @@
-/*
-Exceptions to handle:
-// Also, the constructor should only take maximum and dynamically reallocate array based on new size... (eh...)
-*/
-
 #include "Header.h"
 
 const int MAXIMUM_PARTITIONS = 5;
@@ -13,9 +8,9 @@ void takeInput(ArrayQueue<job>&, Memory&);
 //PRE: ArrayQueue and Memory objects must be defined and sent in as arguments
 //POST: Update data inside ArrayQueue and Memory objects from file
 
-void calculate(char, ArrayQueue<job>&, ArrayQueue<job>&, Memory&, int&);
+void calculate(char algorithm, ArrayQueue<job>&, ArrayQueue<job>&, Memory&, int&);
 
-void display(Memory mainMemory, Memory firstFitMemory, Memory);
+void display(Memory main, Memory first, Memory best, Memory next, Memory worst, int, int, int, int);
 
 int main() {
 
@@ -25,39 +20,36 @@ int main() {
 
 	takeInput(jobsQueue, mainMemory);
 
-	Memory firstFitMemory = mainMemory;
+	Memory firstFitMemory;
+	firstFitMemory = mainMemory; //Overloaded assignment operator can only be used after initialization
 	ArrayQueue<job> firstFitJobsQueue = jobsQueue;
 	ArrayQueue<job> firstFitJobsWaitQueue = jobsWaitQueue;
 	int firstFitJobsWaitCount;
 
-	Memory nextFitMemory = mainMemory;
-	ArrayQueue<job> nextFitJobsQueue = jobsQueue;
-	ArrayQueue<job> nextFitJobsWaitQueue = jobsWaitQueue;
-	int nextFitJobsWaitCount;
-
-	Memory bestFitMemory = mainMemory;
+	Memory bestFitMemory;
+	bestFitMemory = mainMemory; //Overloaded assignment operator can only be used after initialization
 	ArrayQueue<job> bestFitJobsQueue = jobsQueue;
 	ArrayQueue<job> bestFitJobsWaitQueue = jobsWaitQueue;
 	int bestFitJobsWaitCount;
 
-	Memory worstFitMemory = mainMemory;
+	Memory nextFitMemory;
+	nextFitMemory = mainMemory; //Overloaded assignment operator can only be used after initialization
+	ArrayQueue<job> nextFitJobsQueue = jobsQueue;
+	ArrayQueue<job> nextFitJobsWaitQueue = jobsWaitQueue;
+	int nextFitJobsWaitCount;
+
+	Memory worstFitMemory;
+	worstFitMemory = mainMemory; //Overloaded assignment operator can only be used after initialization
 	ArrayQueue<job> worstFitJobsQueue = jobsQueue;
 	ArrayQueue<job> worstFitJobsWaitQueue = jobsWaitQueue;
 	int worstFitJobsWaitCount;
 
 	calculate('F', firstFitJobsQueue, firstFitJobsWaitQueue, firstFitMemory, firstFitJobsWaitCount);
+	calculate('B', bestFitJobsQueue, bestFitJobsWaitQueue, bestFitMemory, bestFitJobsWaitCount);
 	calculate('N', nextFitJobsQueue, nextFitJobsWaitQueue, nextFitMemory, nextFitJobsWaitCount);
-	//calculate('B', bestFitJobsQueue, bestFitJobsWaitQueue, bestFitMemory, bestFitJobsWaitCount);
-	//calculate('W', worstFitJobsQueue, worstFitJobsWaitQueue, worstFitMemory, worstFitJobsWaitCount);
+	calculate('W', worstFitJobsQueue, worstFitJobsWaitQueue, worstFitMemory, worstFitJobsWaitCount);
 
-	/*
-	SECTION #3: DISPLAY
-	*/
-	//Display initial memory allocation
-	//Display memory waste
-	//DIsplay jobs that could not be allocated and are on WAIT
-
-	display(mainMemory, firstFitMemory, nextFitMemory);
+	display(mainMemory, firstFitMemory, bestFitMemory, nextFitMemory, worstFitMemory, firstFitJobsWaitCount, nextFitJobsWaitCount, bestFitJobsWaitCount, worstFitJobsWaitCount);
 
 	system("pause");
 	return 0;
@@ -106,7 +98,7 @@ Section #1: Open memory/memory partitions
 		}
 	}
 
-	/*
+	/* For debugging purposes...
 	//Check mainMemory data is correct...
 	for (int i = 0; i < mainMemory.getInitiatedPartitionCounter(); i++)
 		cout << mainMemory.getPartitionAt(i).getId() << " " << mainMemory.getPartitionAt(i).getSize() << endl;
@@ -132,7 +124,7 @@ Section #2: Open jobs
 		jobsQueue.enqueue(jobHolder);
 	}
 
-	/*
+	/* For debugging purposes...
 	//Check queue data is correct...
 	while (!jobsQueue.isEmpty()) {
 		cout << jobsQueue.peekFront().getId() << " " << jobsQueue.peekFront().getSize() << endl;
@@ -141,7 +133,6 @@ Section #2: Open jobs
 	*/
 
 }
-
 void calculate(char algorithm, ArrayQueue<job>& targetJobsQueue, ArrayQueue<job>& targetJobsWaitQueue, Memory& targetMemory, int& jobsWaitCount) {
 
 	//Calculate initial memory allocation (first fit)
@@ -156,6 +147,7 @@ void calculate(char algorithm, ArrayQueue<job>& targetJobsQueue, ArrayQueue<job>
  	}
 	
 	
+	/* For debugging purposes...
 	//Check memory partition jobs data...
 	cout << "ID | SIZE | WASTE | STATUS | PARTITION_ID" << endl;
 	for (int i = 0; i < targetMemory.getInitiatedPartitionCounter(); i++) {
@@ -167,6 +159,7 @@ void calculate(char algorithm, ArrayQueue<job>& targetJobsQueue, ArrayQueue<job>
 			<< targetMemory.getPartitionAt(i).getJob().getPartitionID() << " " << endl;
 			//}
 	}
+	*/
 	
 
 	//Calculate jobs on wait
@@ -177,35 +170,54 @@ void calculate(char algorithm, ArrayQueue<job>& targetJobsQueue, ArrayQueue<job>
 	}
 }
 
-void display(Memory mainMemory, Memory firstFitMemory, Memory nextFitMemory) {
+void display(Memory mainMemory, Memory firstFitMemory, Memory bestFitMemory, Memory nextFitMemory, Memory worstFitMemory, int firstFitJobsWaitCount, int bestFitJobsWaitCount, int nextFitJobsWaitCount, int worstFitJobsWaitCount) {
 
-	cout << "\t" << "First Fit\t" << "Next Fit\t" << "Best Fit\t" << "Worst Fit" << endl;
+	cout << "\n\t\t" << "First Fit\t" << "Best Fit\t" << "Next Fit\t" << "Worst Fit" << endl;
 
 	for (int i = 0; i < mainMemory.getInitiatedPartitionCounter(); i++) {
-		cout << "P#" << i + 1 << "\t";
+		cout << "P#" << i + 1 << "\t\t";
 
 		//Print first fit
 		if (firstFitMemory.getPartitionAt(i).getStatus())
 			cout << "J#" << firstFitMemory.getPartitionAt(i).getJob().getId() << "/" << firstFitMemory.getPartitionAt(i).getWaste();
 		else
 			cout << "-";
-		cout << "\t";
 
-		/*
+		cout << "\t\t";
+
+		//Print best fit
+		if (bestFitMemory.getPartitionAt(i).getStatus())
+			cout << "J#" << bestFitMemory.getPartitionAt(i).getJob().getId() << "/" << bestFitMemory.getPartitionAt(i).getWaste();
+		else
+			cout << "-";
+		cout << "\t\t";
+
 		//Print next fit
 		if (nextFitMemory.getPartitionAt(i).getStatus())
 			cout << "J#" << nextFitMemory.getPartitionAt(i).getJob().getId() << "/" << nextFitMemory.getPartitionAt(i).getWaste();
 		else
 			cout << "-";
-		cout << "\t";
-		*/
-
-
-		//Print best fit
+		cout << "\t\t";
 
 		//Print worst fit
+		if (worstFitMemory.getPartitionAt(i).getStatus())
+			cout << "J#" << worstFitMemory.getPartitionAt(i).getJob().getId() << "/" << worstFitMemory.getPartitionAt(i).getWaste();
+		else
+			cout << "-";
+		cout << "\t\t";
 
 		cout << endl;
 	}
+
+	cout << "\n";
+
+	//Print waste, not counting unallocated partition
+	cout << "WASTE\t\t" << firstFitMemory.getTotalWaste('N') << "\t\t" << bestFitMemory.getTotalWaste('N') << "\t\t" << nextFitMemory.getTotalWaste('N') << "\t\t" << worstFitMemory.getTotalWaste('N') << endl;
+
+	//Print waste, counting unallocated partition
+	cout << "WASTE+UNALLOC\t" << firstFitMemory.getTotalWaste('U') << "\t\t" << bestFitMemory.getTotalWaste('U') << "\t\t" << nextFitMemory.getTotalWaste('U') << "\t\t" << worstFitMemory.getTotalWaste('U') << endl;
+
+	//Print waiting jobs
+	cout << "WAITING JOBS\t" << firstFitJobsWaitCount <<"\t\t" << bestFitJobsWaitCount << "\t\t" << nextFitJobsWaitCount << "\t\t" << worstFitJobsWaitCount << endl;
 
 }
